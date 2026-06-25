@@ -55,6 +55,9 @@
     "typescript": "5.9.3",
     "vitest": "3.2.6"
   },
+  "overrides": {
+    "postcss": "8.5.15"
+  },
   "lint-staged": {
     "*.{ts,tsx}": [
       "bunx eslint --fix --max-warnings=0",
