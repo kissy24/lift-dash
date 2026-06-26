@@ -21,7 +21,8 @@
 11. PR テンプレート
 12. GitHub CLI 活用例
 13. ディレクトリ・ファイル命名規則
-14. エラーハンドリング規約
+14. 作業記録
+15. エラーハンドリング規約
 
 ---
 
@@ -141,6 +142,27 @@ gh issue list
 # Issue をブランチと紐付け（後述）
 gh issue develop 1 --name "feat/ISSUE-001_project-setup"
 ```
+
+### 2.4 作業記録ファイル
+
+Issue 対応後、または調査・CI 修正などの重要な対応後は、`docs/works/` 配下に該当 Issue 番号の作業記録を作成・更新すること。
+
+```
+docs/works/
+└── ISSUE-001_project-setup.md
+```
+
+記録する内容:
+- 対象 Issue / PR / ブランチ
+- 実施日
+- 実施内容
+- 発生した問題と原因
+- 修正内容
+- 主なコミット
+- 検証結果
+- 次回以降の注意事項
+
+作業記録は、実装差分だけでは追いにくい判断理由・調査経緯・CI 失敗対応を残すために使う。
 
 ---
 
@@ -747,12 +769,46 @@ bunx npm view <package-name> time --json | head -30
 
 ```bash
 # 手動実行（新しいパッケージ追加後に必ず実行）
-osv-scanner --lockfile bun.lockb
+osv-scanner --lockfile bun.lock
 ```
 
 CI（GitHub Actions）で週次自動実行される（`LiftDash_requirements.md` のワークフロー参照）。
 
-### 10.4 `console.log` の禁止
+### 10.4 GitHub Actions / OSV Scanner 失敗時の対応フロー
+
+GitHub Actions が失敗した場合は、推測で修正せず、以下の順序で原因を確定してから対応すること。
+
+```bash
+# PR の check 状態確認
+gh pr checks <PR番号>
+
+# workflow run 一覧確認
+gh run list --branch <branch-name>
+
+# 失敗 run のログ確認
+gh run view <run-id> --log
+```
+
+OSV Scanner が失敗した場合:
+- Actions ログまたは SARIF artifact から、脆弱性 ID、package、version、lockfile path を確認する
+- `bun.lock` 内に該当 package/version が残っているか `rg` で確認する
+- direct dependency の場合は、7日間クールタイムを確認した上で更新する
+- transitive dependency の場合は、親 package の更新で解消できるか先に確認する
+- 親 package 更新後も残る場合のみ、`package.json` の `overrides` で最小範囲の固定を行う
+- `bun install` 後、`bun.lock` から脆弱 version が消えたことを確認する
+- `bun run type-check`、`bun run lint`、`bun run test:run` を再実行する
+- コミット前にサブエージェント検証を再実行する
+- push 後、`gh pr checks <PR番号> --watch` で Actions の pass を確認する
+- 対応内容を `docs/works/ISSUE-XXX_*.md` に追記する
+
+注意:
+- workflow action の tag を変更する場合は、GitHub 上で tag の存在と action/reusable workflow としての利用可否を確認する
+- 新しい action/reusable workflow の version は、7日間クールタイムを満たすことを確認する
+- 一時ディレクトリに置いた実行ファイルを PATH に入れてコミットや CI 修正を進めない
+- 公式配布物を使う場合は、checksum または署名を検証してから固定パスに配置する
+- `next build` などで生成された `next-env.d.ts` の差分が目的外の場合は、コミット対象に含めない
+
+### 10.5 `console.log` の禁止
 
 本番コードでの `console.log` は ESLint で警告。デバッグ用ログは必ず削除してからコミットする。
 
@@ -883,9 +939,55 @@ export default function() { ... }
 
 ---
 
-## 14. エラーハンドリング規約
+## 14. 作業記録
 
-### 14.1 Server Actions のエラー返却
+### 14.1 `docs/works/` の運用
+
+`docs/works/` は Issue ごとの実作業ログを保存する場所とする。Issue 対応が完了した時点、または CI / セキュリティ監査 / 環境問題などで追加対応が発生した時点で更新する。
+
+ファイル名:
+
+```
+docs/works/ISSUE-XXX_short-title.md
+```
+
+テンプレート:
+
+```markdown
+# [ISSUE-XXX] タイトル 作業記録
+
+## 対象
+- GitHub Issue:
+- PR:
+- ブランチ:
+
+## 実施日
+- YYYY-MM-DD
+
+## 実施内容
+- 
+
+## 発生した問題と対応
+- 
+
+## 主なコミット
+- 
+
+## 検証結果
+- `bun run type-check`:
+- `bun run lint`:
+- `bun run test:run`:
+- GitHub Actions:
+
+## 注意事項
+- 
+```
+
+---
+
+## 15. エラーハンドリング規約
+
+### 15.1 Server Actions のエラー返却
 
 ```typescript
 // 統一された戻り値型
@@ -906,7 +1008,7 @@ export async function createExerciseAction(
 }
 ```
 
-### 14.2 Client 側のエラー表示
+### 15.2 Client 側のエラー表示
 
 ```typescript
 // useActionState（React 19 / Next.js 14）を使用
@@ -915,7 +1017,7 @@ const [state, action] = useActionState(createExerciseAction, null)
 // エラー表示は toast または フォームインライン表示とする
 ```
 
-### 14.3 エラーバウンダリ
+### 15.3 エラーバウンダリ
 
 - `app/error.tsx` でページレベルのエラーをキャッチする
 - 想定外のエラーは `console.error` でログを残す（`console.log` は禁止）
@@ -944,7 +1046,7 @@ bun run test:run                     # テスト（1回実行）
 bun run test:coverage                # カバレッジ
 
 # セキュリティ監査
-osv-scanner --lockfile bun.lockb
+osv-scanner --lockfile bun.lock
 ```
 
 ---
