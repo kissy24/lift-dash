@@ -1,0 +1,70 @@
+{
+  "name": "lift-dash",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint --max-warnings=0",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit --incremental false",
+    "test": "vitest --pool=threads",
+    "test:run": "vitest run --pool=threads",
+    "test:coverage": "vitest run --pool=threads --coverage",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@supabase/ssr": "0.8.0",
+    "@supabase/supabase-js": "2.85.0",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "date-fns": "4.1.0",
+    "lucide-react": "0.552.0",
+    "next": "15.5.19",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-hook-form": "7.66.1",
+    "recharts": "3.4.1",
+    "tailwind-merge": "3.4.0",
+    "tailwindcss-animate": "1.0.7",
+    "zod": "4.1.13"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "20.2.0",
+    "@commitlint/config-conventional": "20.2.0",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.1",
+    "@types/node": "24.10.1",
+    "@types/react": "18.3.27",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "5.0.4",
+    "@vitest/coverage-v8": "3.2.6",
+    "autoprefixer": "10.4.22",
+    "eslint": "8.57.1",
+    "eslint-config-next": "15.5.19",
+    "eslint-plugin-import": "2.32.0",
+    "husky": "9.1.7",
+    "jsdom": "26.1.0",
+    "lint-staged": "16.2.7",
+    "postcss": "8.5.15",
+    "prettier": "3.7.4",
+    "tailwindcss": "3.4.18",
+    "typescript": "5.9.3",
+    "vitest": "3.2.6"
+  },
+  "overrides": {
+    "postcss": "8.5.15"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "bunx eslint --fix --max-warnings=0",
+      "bunx prettier --write"
+    ],
+    "*.{json,md,css,yaml,yml}": [
+      "bunx prettier --write"
+    ]
+  }
+}

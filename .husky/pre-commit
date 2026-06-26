@@ -1,0 +1,8 @@
+#!/bin/sh
+bunx lint-staged
+
+echo "Running sub-agent verification..."
+bun run type-check || { echo "Type check failed"; exit 1; }
+bun run lint || { echo "Lint failed"; exit 1; }
+bun run test:run || { echo "Tests failed"; exit 1; }
+echo "All checks passed"

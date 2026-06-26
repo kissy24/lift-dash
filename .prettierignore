@@ -1,0 +1,7 @@
+node_modules
+.next
+coverage
+bun.lock
+AGENTS.md
+README.md
+docs/LiftDash_requirements.md
