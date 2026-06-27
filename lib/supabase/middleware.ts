@@ -4,11 +4,12 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { getAuthDestination, shouldRedirectToAuthDestination } from '@/lib/auth/route-guard'
 
 import { getSupabaseConfig } from './config'
+import type { Database } from './database.types'
 
 export async function updateSession(request: NextRequest): Promise<NextResponse> {
   let response = NextResponse.next({ request })
   const { url, anonKey } = getSupabaseConfig()
-  const supabase = createServerClient(url, anonKey, {
+  const supabase = createServerClient<Database>(url, anonKey, {
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll(cookiesToSet) {

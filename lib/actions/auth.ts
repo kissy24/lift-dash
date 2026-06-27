@@ -3,18 +3,13 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { ZodError } from 'zod'
 
-import type { ActionResult } from '@/lib/actions/action-result'
+import type { ActionFailure, ActionResult } from '@/lib/actions/action-result'
 import { getAuthDestination, type AuthDestination } from '@/lib/auth/route-guard'
 import { createClient } from '@/lib/supabase/server'
 import { loginSchema, totpCodeSchema, totpEnrollmentSchema } from '@/lib/validations/auth'
 
 type RedirectData = { redirectTo: AuthDestination }
 type EnrollmentData = { factorId: string; qrCode: string; secret: string }
-type ActionFailure = {
-  success: false
-  error: { message: string; fields?: Record<string, string[]> }
-}
-
 function validationFailure(error: ZodError): ActionFailure {
   const fields: Record<string, string[]> = {}
 

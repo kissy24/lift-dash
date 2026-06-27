@@ -3,6 +3,6 @@ export type ActionError = {
   fields?: Record<string, string[]>
 }
 
-export type ActionResult<T = undefined> =
-  | { success: true; data: T }
-  | { success: false; error: ActionError }
+export type ActionFailure = { success: false; error: ActionError }
+
+export type ActionResult<T = undefined> = { success: true; data: T } | ActionFailure

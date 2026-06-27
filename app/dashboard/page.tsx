@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import { LogoutButton } from '@/components/forms/LogoutButton'
 
 export default function DashboardPage() {
@@ -9,7 +11,12 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-semibold tracking-tight">ダッシュボード</h1>
           <p className="text-muted-foreground">トレーニング記録をここから確認できます。</p>
         </div>
-        <LogoutButton />
+        <div className="flex items-center gap-4">
+          <Link className="text-sm font-medium text-primary hover:underline" href="/exercises">
+            種目マスタ
+          </Link>
+          <LogoutButton />
+        </div>
       </header>
     </main>
   )
