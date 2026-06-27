@@ -44,7 +44,7 @@
 - `bun run test:coverage`: 成功（`lib/actions` 87.8%、認証フォーム群 89.3%）
 - `bun run build`: 成功
 - サブエージェントによるコミット前確認: 成功
-- GitHub Actions: PR 作成後に確認
+- GitHub Actions: 対象 workflow なし（package、lockfile、security workflow の変更なし）
 
 ## 注意事項
 
