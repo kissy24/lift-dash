@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #2 `[ISSUE-003] 種目マスタCRUD`
-- PR: 作成後に記録
+- PR: #13
 - ブランチ: `feat/ISSUE-003_exercise-master-crud`
 
 ## 実施日
@@ -31,7 +31,7 @@
 
 ## 主なコミット
 
-- コミット後に記録
+- `496b9f2 feat(exercise): implement exercise master CRUD (#2)`
 
 ## 検証結果
 
@@ -41,7 +41,7 @@
 - `bun run test:coverage`: 成功（`lib/actions` 90.5%、新規CRUD UI 100%）
 - `bun run build`: 成功
 - サブエージェントによるコミット前確認: 成功
-- GitHub Actions: PR作成後に確認
+- GitHub Actions: 対象workflowなし（package、lockfile、security workflowの変更なし）
 
 ## 注意事項
 
