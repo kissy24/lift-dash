@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #5 `[ISSUE-002] 認証とMFA`
-- PR: 作成後に記録
+- PR: #12
 - ブランチ: `feat/ISSUE-002_authentication`
 
 ## 実施日
@@ -34,7 +34,7 @@
 
 ## 主なコミット
 
-- コミット後に記録
+- `819d895 feat(auth): implement mandatory TOTP MFA (#5)`
 
 ## 検証結果
 
