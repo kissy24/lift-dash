@@ -1,13 +1,15 @@
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+const mocks = vi.hoisted(() => ({ redirect: vi.fn() }))
+
+vi.mock('next/navigation', () => ({ redirect: mocks.redirect }))
 
 import HomePage from './page'
 
 describe('HomePage', () => {
-  it('renders the product name and tagline', () => {
-    render(<HomePage />)
+  it('redirects to the authenticated landing page', () => {
+    HomePage()
 
-    expect(screen.getByText('LiftDash')).toBeInTheDocument()
-    expect(screen.getByText('Track your sets, visualize your gains.')).toBeInTheDocument()
+    expect(mocks.redirect).toHaveBeenCalledWith('/dashboard')
   })
 })
