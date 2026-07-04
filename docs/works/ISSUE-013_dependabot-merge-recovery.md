@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #14 `[ISSUE-013] Dependabotマージ後の依存関係修復`
-- PR: 作成後に記録
+- PR: #15 `fix(deps): restore reproducible dependency baseline`
 - ブランチ: `fix/ISSUE-013_dependabot-merge-recovery`
 
 ## 実施日
@@ -30,7 +30,7 @@
 
 ## 主なコミット
 
-- コミット後に記録
+- `38227cf fix(deps): restore reproducible dependency baseline (#14)`
 
 ## 検証結果
 
@@ -41,7 +41,7 @@
 - `bun run build`: 成功
 - OSV Scanner `2.4.0`: 成功（794 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功
-- GitHub Actions: PR作成後に確認
+- GitHub Actions: 成功（Quality / Security Audit / Dependabot設定検証 / OSV Scanner）
 
 ## 注意事項
 
