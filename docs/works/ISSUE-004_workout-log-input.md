@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #21 `[ISSUE-004] 手動トレーニング記録入力`
-- PR: 作成後に記録
+- PR: #22 `feat(workout): add manual workout entry (#21)`
 - ブランチ: `feat/ISSUE-004_workout-log-input`
 
 ## 実施日
@@ -29,7 +29,7 @@
 
 ## 主なコミット
 
-- コミット後に記録
+- `8456957 feat(workout): add manual workout entry (#21)`
 
 ## 検証結果
 
@@ -41,10 +41,11 @@
 - `bun run build`: 成功
 - OSV Scanner `2.4.0`: 成功（794 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功（型 / Lint warnings 0 / 20 files・75 tests）
-- GitHub Actions: PR作成後に確認
+- GitHub Actions: 成功（Quality: install / type-check / lint / test / build）
 
 ## 注意事項
 
 - migration適用後に`lib/supabase/database.types.ts`をSupabase CLIで再生成し、手動定義との差分を確認する。
 - ISSUE-005で`/log/[date]`の詳細表示を実装するまで、保存後の遷移先は未実装である。
 - 同一セッション内で同じ種目を重複登録せず、1種目内のセットとしてまとめる。
+- Quality workflowの`actions/checkout@v4`にNode.js 20非推奨警告があるため、別Issueで更新を検討する。
