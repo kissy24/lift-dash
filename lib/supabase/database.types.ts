@@ -35,6 +35,75 @@ export type Database = {
         }
         Relationships: []
       }
+      presets: {
+        Row: {
+          id: string
+          name: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      preset_items: {
+        Row: {
+          id: string
+          preset_id: string
+          exercise_id: string
+          order_index: number
+          default_weight: number | null
+          default_reps: number | null
+          default_sets: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          preset_id: string
+          exercise_id: string
+          order_index?: number
+          default_weight?: number | null
+          default_reps?: number | null
+          default_sets?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          preset_id?: string
+          exercise_id?: string
+          order_index?: number
+          default_weight?: number | null
+          default_reps?: number | null
+          default_sets?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'preset_items_preset_id_fkey'
+            columns: ['preset_id']
+            isOneToOne: false
+            referencedRelation: 'presets'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'preset_items_exercise_id_fkey'
+            columns: ['exercise_id']
+            isOneToOne: false
+            referencedRelation: 'exercises'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       workout_sessions: {
         Row: {
           id: string
@@ -107,6 +176,33 @@ export type Database = {
     }
     Views: Record<never, never>
     Functions: {
+      create_preset: {
+        Args: {
+          p_name: string
+          p_items: Array<{
+            exercise_id: string
+            order_index: number
+            default_weight: number | null
+            default_reps: number | null
+            default_sets: number
+          }>
+        }
+        Returns: string
+      }
+      update_preset: {
+        Args: {
+          p_preset_id: string
+          p_name: string
+          p_items: Array<{
+            exercise_id: string
+            order_index: number
+            default_weight: number | null
+            default_reps: number | null
+            default_sets: number
+          }>
+        }
+        Returns: boolean
+      }
       create_workout_session: {
         Args: {
           p_date: string
@@ -148,5 +244,7 @@ export type Database = {
 }
 
 export type Exercise = Database['public']['Tables']['exercises']['Row']
+export type Preset = Database['public']['Tables']['presets']['Row']
+export type PresetItem = Database['public']['Tables']['preset_items']['Row']
 export type WorkoutSession = Database['public']['Tables']['workout_sessions']['Row']
 export type WorkoutSet = Database['public']['Tables']['workout_sets']['Row']
