@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #27 `[ISSUE-006] プリセットCRUD`
-- PR: 作成後に記録
+- PR: #28 `feat(preset): add preset management (#27)`
 - ブランチ: `feat/ISSUE-006_preset-crud`
 
 ## 実施日
@@ -29,7 +29,7 @@
 
 ## 主なコミット
 
-- コミット後に記録
+- `c997c28 feat(preset): add preset management (#27)`
 
 ## 検証結果
 
@@ -41,7 +41,7 @@
 - `bun run build`: 成功
 - OSV Scanner `2.4.0`: 成功（794 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功（型 / Lint warnings 0 / 33 files・119 tests）
-- GitHub Actions: PR作成後に確認
+- GitHub Actions: 成功（Quality: install / type-check / lint / test / build）
 
 ## 注意事項
 
