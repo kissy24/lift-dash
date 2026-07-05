@@ -3,10 +3,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({
   createWorkoutAction: vi.fn(),
+  updateWorkoutAction: vi.fn(),
   push: vi.fn(),
 }))
 
-vi.mock('@/lib/actions/workout', () => ({ createWorkoutAction: mocks.createWorkoutAction }))
+vi.mock('@/lib/actions/workout', () => ({
+  createWorkoutAction: mocks.createWorkoutAction,
+  updateWorkoutAction: mocks.updateWorkoutAction,
+}))
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: mocks.push }) }))
 
 import { WorkoutForm } from './WorkoutForm'
@@ -111,5 +115,42 @@ describe('WorkoutForm', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'トレーニング記録を保存できませんでした'
     )
+  })
+
+  it('loads and atomically updates an existing session', async () => {
+    mocks.updateWorkoutAction.mockResolvedValue({
+      success: true,
+      data: { id: '15d7ac4f-e9b1-48a0-a2b1-a589b893b634', date: '2026-07-05' },
+    })
+    render(
+      <WorkoutForm
+        exercises={EXERCISES}
+        initialSession={{
+          id: '15d7ac4f-e9b1-48a0-a2b1-a589b893b634',
+          date: '2026-07-05',
+          notes: '脚の日',
+          exercises: [
+            {
+              exerciseId: EXERCISES[1]?.id ?? '',
+              sets: [{ weight: 100, reps: 5 }],
+            },
+          ],
+        }}
+      />
+    )
+
+    expect(screen.getByLabelText('トレーニング日')).toHaveValue('2026-07-05')
+    expect(screen.getByLabelText('種目')).toHaveValue(EXERCISES[1]?.id)
+    fireEvent.click(screen.getByRole('button', { name: '変更を保存' }))
+
+    await waitFor(() => expect(mocks.updateWorkoutAction).toHaveBeenCalledOnce())
+    const formData = mocks.updateWorkoutAction.mock.calls[0]?.[0]
+    expect(formData).toBeInstanceOf(FormData)
+    if (!(formData instanceof FormData)) throw new Error('Expected FormData')
+    expect(JSON.parse(String(formData.get('payload')))).toMatchObject({
+      id: '15d7ac4f-e9b1-48a0-a2b1-a589b893b634',
+      date: '2026-07-05',
+    })
+    expect(mocks.push).toHaveBeenCalledWith('/log/2026-07-05')
   })
 })

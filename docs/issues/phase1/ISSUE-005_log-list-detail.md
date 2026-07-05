@@ -10,19 +10,21 @@
 
 ## 受け入れ条件 (Acceptance Criteria)
 
-- [ ] `/log` で記録のある日を一覧表示できる
-- [ ] `/log/[date]` で特定日のセッションとセット詳細を表示できる
-- [ ] セッション単位で記録を編集できる
-- [ ] セッション単位で記録を削除できる
-- [ ] セット単位で記録を編集・削除できる
-- [ ] Server Actions で認証チェックと Zod バリデーションを行っている
-- [ ] 対応するテストがすべてグリーン
+- [x] `/log` で記録のある日を一覧表示できる
+- [x] `/log/[date]` で特定日のセッションとセット詳細を表示できる
+- [x] セッション単位で記録を編集できる
+- [x] セッション単位で記録を削除できる
+- [x] セット単位で記録を編集・削除できる
+- [x] Server Actions で認証チェックと Zod バリデーションを行っている
+- [x] 対応するテストがすべてグリーン
 
 ## 技術詳細
 
 - Phase 1 ではカレンダービューではなく一覧表示を優先し、カレンダービューは ISSUE-009 で実装する
 - 日付ルートは `YYYY-MM-DD` を受け付け、Zod または date-fns で検証する
 - 削除時は `workout_sessions` の cascade delete で関連セットを削除する
+- セッション全体の編集はDB関数で原子的に更新する
+- 最終セットの単独削除は禁止し、セッション単位の削除を案内する
 
 ## 関連ファイル（予定）
 
@@ -31,6 +33,7 @@
 - `components/forms/WorkoutForm.tsx`
 - `lib/actions/workout.ts`
 - `lib/validations/workout.ts`
+- `supabase/migrations/20260705160000_manage_workouts.sql`
 
 ## 依存 Issue
 

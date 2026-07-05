@@ -6,7 +6,10 @@ function isCalendarDate(value: string): boolean {
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value
 }
 
-const workoutSetSchema = z.object({
+export const workoutDateSchema = z.string().refine(isCalendarDate, '日付が正しくありません')
+const workoutIdSchema = z.uuid('IDが正しくありません')
+
+export const workoutSetSchema = z.object({
   weight: z.coerce
     .number('重量を入力してください')
     .min(0, '重量は0以上で入力してください')
@@ -29,7 +32,7 @@ const workoutExerciseSchema = z.object({
 
 export const workoutSessionSchema = z
   .object({
-    date: z.string().refine(isCalendarDate, '日付が正しくありません'),
+    date: workoutDateSchema,
     notes: z.string().trim().max(2000, 'メモは2000文字以内で入力してください'),
     exercises: z
       .array(workoutExerciseSchema)
@@ -49,6 +52,23 @@ export const workoutSessionSchema = z
       exerciseIds.add(exercise.exerciseId)
     })
   })
+
+export const updateWorkoutSessionSchema = workoutSessionSchema.safeExtend({
+  id: workoutIdSchema,
+})
+
+export const deleteWorkoutSessionSchema = z.object({
+  id: workoutIdSchema,
+  date: workoutDateSchema,
+})
+
+export const workoutSetIdentitySchema = z.object({
+  id: workoutIdSchema,
+  sessionId: workoutIdSchema,
+  date: workoutDateSchema,
+})
+
+export const mutateWorkoutSetSchema = workoutSetIdentitySchema.extend(workoutSetSchema.shape)
 
 export type WorkoutSessionInput = z.input<typeof workoutSessionSchema>
 export type WorkoutSession = z.output<typeof workoutSessionSchema>

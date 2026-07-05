@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { workoutSessionSchema } from './workout'
+import {
+  deleteWorkoutSessionSchema,
+  mutateWorkoutSetSchema,
+  updateWorkoutSessionSchema,
+  workoutDateSchema,
+  workoutSessionSchema,
+} from './workout'
 
 const EXERCISE_ID = '5f768f8b-91b9-473a-aeca-3d1934e26a8f'
 
@@ -76,5 +82,38 @@ describe('workoutSessionSchema', () => {
     })
 
     expect(result.success).toBe(false)
+  })
+})
+
+describe('workout mutation schemas', () => {
+  it('validates route dates independently', () => {
+    expect(workoutDateSchema.safeParse('2026-07-05').success).toBe(true)
+    expect(workoutDateSchema.safeParse('2026-02-30').success).toBe(false)
+  })
+
+  it('requires a session id when updating the full workout', () => {
+    const result = updateWorkoutSessionSchema.safeParse({
+      id: 'invalid',
+      date: '2026-07-05',
+      notes: '',
+      exercises: [{ exerciseId: EXERCISE_ID, sets: [{ weight: 60, reps: 10 }] }],
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('validates session deletion and set mutation identifiers', () => {
+    expect(
+      deleteWorkoutSessionSchema.safeParse({ id: EXERCISE_ID, date: '2026-07-05' }).success
+    ).toBe(true)
+    expect(
+      mutateWorkoutSetSchema.safeParse({
+        id: EXERCISE_ID,
+        sessionId: EXERCISE_ID,
+        date: '2026-07-05',
+        weight: 80,
+        reps: 5,
+      }).success
+    ).toBe(true)
   })
 })
