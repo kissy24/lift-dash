@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #3 `[ISSUE-005] 記録一覧・詳細表示`
-- PR: 作成後に記録
+- PR: #23 `feat(log): add workout history management (#3)`
 - ブランチ: `feat/ISSUE-005_log-list-detail`
 
 ## 実施日
@@ -30,7 +30,7 @@
 
 ## 主なコミット
 
-- コミット後に記録
+- `5c11160 feat(log): add workout history management (#3)`
 
 ## 検証結果
 
@@ -42,7 +42,7 @@
 - `bun run build`: 成功
 - OSV Scanner `2.4.0`: 成功（794 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功（型 / Lint warnings 0 / 25 files・97 tests）
-- GitHub Actions: PR作成後に確認
+- GitHub Actions: 成功（Quality: install / type-check / lint / test / build）
 
 ## 注意事項
 
