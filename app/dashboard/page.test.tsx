@@ -12,5 +12,6 @@ describe('DashboardPage', () => {
     render(<DashboardPage />)
 
     expect(screen.getByRole('link', { name: '記録を追加' })).toHaveAttribute('href', '/log/new')
+    expect(screen.getByRole('link', { name: '記録一覧' })).toHaveAttribute('href', '/log')
   })
 })

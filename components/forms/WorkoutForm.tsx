@@ -9,9 +9,9 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Select } from '@/components/ui/Select'
-import { createWorkoutAction } from '@/lib/actions/workout'
+import { createWorkoutAction, updateWorkoutAction } from '@/lib/actions/workout'
 import type { Exercise } from '@/lib/supabase/database.types'
-import { workoutSessionSchema } from '@/lib/validations/workout'
+import { updateWorkoutSessionSchema, workoutSessionSchema } from '@/lib/validations/workout'
 
 type WorkoutFormValues = {
   date: string
@@ -24,24 +24,24 @@ type WorkoutFormValues = {
 
 type WorkoutFormProps = {
   exercises: Exercise[]
+  initialSession?: WorkoutFormInitialSession
 }
+
+export type WorkoutFormInitialSession = WorkoutFormValues & { id: string }
 
 const EMPTY_SET = { weight: 0, reps: 1 }
 
-export function WorkoutForm({ exercises }: WorkoutFormProps) {
+export function WorkoutForm({ exercises, initialSession }: WorkoutFormProps) {
   const router = useRouter()
   const [actionError, setActionError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
   const { control, getValues, handleSubmit, register, setValue, watch } =
     useForm<WorkoutFormValues>({
       defaultValues: {
-        date: format(new Date(), 'yyyy-MM-dd'),
-        notes: '',
-        exercises: [
-          {
-            exerciseId: exercises[0]?.id ?? '',
-            sets: [EMPTY_SET],
-          },
+        date: initialSession?.date ?? format(new Date(), 'yyyy-MM-dd'),
+        notes: initialSession?.notes ?? '',
+        exercises: initialSession?.exercises ?? [
+          { exerciseId: exercises[0]?.id ?? '', sets: [EMPTY_SET] },
         ],
       },
     })
@@ -69,7 +69,10 @@ export function WorkoutForm({ exercises }: WorkoutFormProps) {
 
   function submitWorkout(values: WorkoutFormValues) {
     setActionError(null)
-    const parsed = workoutSessionSchema.safeParse(values)
+    const payload = initialSession ? { ...values, id: initialSession.id } : values
+    const parsed = initialSession
+      ? updateWorkoutSessionSchema.safeParse(payload)
+      : workoutSessionSchema.safeParse(payload)
     if (!parsed.success) {
       setActionError(parsed.error.issues[0]?.message ?? '入力内容を確認してください')
       return
@@ -78,7 +81,9 @@ export function WorkoutForm({ exercises }: WorkoutFormProps) {
     const formData = new FormData()
     formData.set('payload', JSON.stringify(parsed.data))
     startTransition(async () => {
-      const result = await createWorkoutAction(formData)
+      const result = initialSession
+        ? await updateWorkoutAction(formData)
+        : await createWorkoutAction(formData)
       if (!result.success) {
         setActionError(result.error.message)
         return
@@ -229,7 +234,7 @@ export function WorkoutForm({ exercises }: WorkoutFormProps) {
       ) : null}
 
       <Button className="w-full sm:w-auto" type="submit" disabled={isPending}>
-        {isPending ? '保存中…' : '記録を保存'}
+        {isPending ? '保存中…' : initialSession ? '変更を保存' : '記録を保存'}
       </Button>
     </form>
   )

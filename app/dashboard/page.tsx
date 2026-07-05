@@ -12,6 +12,9 @@ export default function DashboardPage() {
           <p className="text-muted-foreground">トレーニング記録をここから確認できます。</p>
         </div>
         <div className="flex items-center gap-4">
+          <Link className="text-sm font-medium text-primary hover:underline" href="/log">
+            記録一覧
+          </Link>
           <Link className="text-sm font-medium text-primary hover:underline" href="/log/new">
             記録を追加
           </Link>

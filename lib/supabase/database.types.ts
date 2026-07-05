@@ -120,6 +120,27 @@ export type Database = {
         }
         Returns: string
       }
+      update_workout_session: {
+        Args: {
+          p_session_id: string
+          p_date: string
+          p_notes: string
+          p_sets: Array<{
+            exercise_id: string
+            set_number: number
+            weight: number
+            reps: number
+          }>
+        }
+        Returns: boolean
+      }
+      delete_workout_set: {
+        Args: {
+          p_set_id: string
+          p_session_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: Record<never, never>
     CompositeTypes: Record<never, never>

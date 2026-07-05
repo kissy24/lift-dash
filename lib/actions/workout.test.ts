@@ -5,13 +5,25 @@ const mocks = vi.hoisted(() => ({
   getUser: vi.fn(),
   getAuthenticatorAssuranceLevel: vi.fn(),
   rpc: vi.fn(),
+  from: vi.fn(),
+  update: vi.fn(),
+  delete: vi.fn(),
+  eq: vi.fn(),
+  select: vi.fn(),
+  single: vi.fn(),
   revalidatePath: vi.fn(),
 }))
 
 vi.mock('@/lib/supabase/server', () => ({ createClient: mocks.createClient }))
 vi.mock('next/cache', () => ({ revalidatePath: mocks.revalidatePath }))
 
-import { createWorkoutAction } from './workout'
+import {
+  createWorkoutAction,
+  deleteWorkoutSessionAction,
+  deleteWorkoutSetAction,
+  updateWorkoutAction,
+  updateWorkoutSetAction,
+} from './workout'
 
 const VALID_PAYLOAD = {
   date: '2026-07-04',
@@ -42,7 +54,13 @@ describe('createWorkoutAction', () => {
         mfa: { getAuthenticatorAssuranceLevel: mocks.getAuthenticatorAssuranceLevel },
       },
       rpc: mocks.rpc,
+      from: mocks.from,
     })
+    mocks.from.mockReturnValue({ update: mocks.update, delete: mocks.delete })
+    mocks.update.mockReturnValue({ eq: mocks.eq })
+    mocks.delete.mockReturnValue({ eq: mocks.eq })
+    mocks.eq.mockReturnValue({ eq: mocks.eq, select: mocks.select })
+    mocks.select.mockReturnValue({ single: mocks.single })
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null })
     mocks.getAuthenticatorAssuranceLevel.mockResolvedValue({
       data: { currentLevel: 'aal2', nextLevel: 'aal2' },
@@ -127,6 +145,109 @@ describe('createWorkoutAction', () => {
     expect(result).toEqual({
       success: false,
       error: { message: 'トレーニング記録を保存できませんでした' },
+    })
+  })
+})
+
+describe('workout management actions', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mocks.createClient.mockResolvedValue({
+      auth: {
+        getUser: mocks.getUser,
+        mfa: { getAuthenticatorAssuranceLevel: mocks.getAuthenticatorAssuranceLevel },
+      },
+      rpc: mocks.rpc,
+      from: mocks.from,
+    })
+    mocks.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null })
+    mocks.getAuthenticatorAssuranceLevel.mockResolvedValue({
+      data: { currentLevel: 'aal2', nextLevel: 'aal2' },
+      error: null,
+    })
+    mocks.from.mockReturnValue({ update: mocks.update, delete: mocks.delete })
+    mocks.update.mockReturnValue({ eq: mocks.eq })
+    mocks.delete.mockReturnValue({ eq: mocks.eq })
+    mocks.eq.mockReturnValue({ eq: mocks.eq, select: mocks.select })
+    mocks.select.mockReturnValue({ single: mocks.single })
+  })
+
+  it('atomically replaces a session and its sets', async () => {
+    mocks.rpc.mockResolvedValue({ data: true, error: null })
+    const payload = {
+      ...VALID_PAYLOAD,
+      id: '15d7ac4f-e9b1-48a0-a2b1-a589b893b634',
+      date: '2026-07-05',
+    }
+
+    const result = await updateWorkoutAction(payloadFormData(payload))
+
+    expect(mocks.rpc).toHaveBeenCalledWith(
+      'update_workout_session',
+      expect.objectContaining({
+        p_session_id: '15d7ac4f-e9b1-48a0-a2b1-a589b893b634',
+        p_date: '2026-07-05',
+      })
+    )
+    expect(mocks.revalidatePath).toHaveBeenCalledWith('/log/2026-07-05')
+    expect(result).toEqual({
+      success: true,
+      data: { id: '15d7ac4f-e9b1-48a0-a2b1-a589b893b634', date: '2026-07-05' },
+    })
+  })
+
+  it('deletes a validated session and relies on cascade deletion', async () => {
+    mocks.single.mockResolvedValue({
+      data: { id: '15d7ac4f-e9b1-48a0-a2b1-a589b893b634' },
+      error: null,
+    })
+    const formData = new FormData()
+    formData.set('id', '15d7ac4f-e9b1-48a0-a2b1-a589b893b634')
+    formData.set('date', '2026-07-05')
+
+    const result = await deleteWorkoutSessionAction(formData)
+
+    expect(mocks.from).toHaveBeenCalledWith('workout_sessions')
+    expect(mocks.delete).toHaveBeenCalledOnce()
+    expect(mocks.eq).toHaveBeenCalledWith('id', '15d7ac4f-e9b1-48a0-a2b1-a589b893b634')
+    expect(result).toEqual({ success: true, data: undefined })
+  })
+
+  it('updates one validated set', async () => {
+    mocks.single.mockResolvedValue({
+      data: { id: '40a4ed9d-a784-4f23-95d1-d8b0c5859a63' },
+      error: null,
+    })
+    const formData = new FormData()
+    formData.set('id', '40a4ed9d-a784-4f23-95d1-d8b0c5859a63')
+    formData.set('sessionId', '15d7ac4f-e9b1-48a0-a2b1-a589b893b634')
+    formData.set('date', '2026-07-05')
+    formData.set('weight', '82.5')
+    formData.set('reps', '6')
+
+    const result = await updateWorkoutSetAction(formData)
+
+    expect(mocks.from).toHaveBeenCalledWith('workout_sets')
+    expect(mocks.update).toHaveBeenCalledWith({ weight: 82.5, reps: 6 })
+    expect(mocks.eq).toHaveBeenCalledWith('session_id', '15d7ac4f-e9b1-48a0-a2b1-a589b893b634')
+    expect(result).toEqual({ success: true, data: undefined })
+  })
+
+  it('prevents deleting the final set in a session', async () => {
+    mocks.rpc.mockResolvedValue({
+      data: null,
+      error: { code: 'P0001', message: 'A workout session must contain at least one set' },
+    })
+    const formData = new FormData()
+    formData.set('id', '40a4ed9d-a784-4f23-95d1-d8b0c5859a63')
+    formData.set('sessionId', '15d7ac4f-e9b1-48a0-a2b1-a589b893b634')
+    formData.set('date', '2026-07-05')
+
+    const result = await deleteWorkoutSetAction(formData)
+
+    expect(result).toEqual({
+      success: false,
+      error: { message: '最後のセットは削除できません。セッションを削除してください' },
     })
   })
 })
