@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #26 `[ISSUE-007] プリセットからの一括入力`
-- PR: 作成後に記録
+- PR: #29 `feat(workout): expand presets into workout form (#26)`
 - ブランチ: `feat/ISSUE-007_bulk-input-from-preset`
 
 ## 実施日
@@ -27,7 +27,7 @@
 
 ## 主なコミット
 
-- コミット後に記録
+- `94d282b feat(workout): expand presets into workout form (#26)`
 
 ## 検証結果
 
@@ -39,7 +39,7 @@
 - `bun run build`: 成功
 - OSV Scanner `2.4.0`: 成功（794 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功（型 / Lint warnings 0 / 35 files・128 tests）
-- GitHub Actions: PR作成後に確認
+- GitHub Actions: 成功（Quality: install / type-check / lint / test / build）
 
 ## 注意事項
 
