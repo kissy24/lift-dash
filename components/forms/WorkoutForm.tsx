@@ -6,12 +6,14 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/Button'
+import { PresetSelector } from '@/components/forms/PresetSelector'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Select } from '@/components/ui/Select'
 import { createWorkoutAction, updateWorkoutAction } from '@/lib/actions/workout'
 import type { Exercise } from '@/lib/supabase/database.types'
 import { updateWorkoutSessionSchema, workoutSessionSchema } from '@/lib/validations/workout'
+import { presetToWorkoutExercises, type WorkoutPreset } from '@/lib/workouts/preset-defaults'
 
 type WorkoutFormValues = {
   date: string
@@ -25,17 +27,19 @@ type WorkoutFormValues = {
 type WorkoutFormProps = {
   exercises: Exercise[]
   initialSession?: WorkoutFormInitialSession
+  presets?: WorkoutPreset[]
 }
 
 export type WorkoutFormInitialSession = WorkoutFormValues & { id: string }
 
 const EMPTY_SET = { weight: 0, reps: 1 }
 
-export function WorkoutForm({ exercises, initialSession }: WorkoutFormProps) {
+export function WorkoutForm({ exercises, initialSession, presets }: WorkoutFormProps) {
   const router = useRouter()
   const [actionError, setActionError] = useState<string | null>(null)
+  const [selectedPresetId, setSelectedPresetId] = useState('')
   const [isPending, startTransition] = useTransition()
-  const { control, getValues, handleSubmit, register, setValue, watch } =
+  const { control, formState, getValues, handleSubmit, register, setValue, watch } =
     useForm<WorkoutFormValues>({
       defaultValues: {
         date: initialSession?.date ?? format(new Date(), 'yyyy-MM-dd'),
@@ -45,9 +49,21 @@ export function WorkoutForm({ exercises, initialSession }: WorkoutFormProps) {
         ],
       },
     })
-  const { fields, append, remove } = useFieldArray({ control, name: 'exercises' })
+  const { fields, append, remove, replace } = useFieldArray({ control, name: 'exercises' })
   const formExercises = watch('exercises')
   const selectedIds = formExercises.map((exercise) => exercise.exerciseId)
+  const isDirty = formState.isDirty
+
+  function selectPreset(presetId: string) {
+    const preset = presets?.find((candidate) => candidate.id === presetId)
+    if (!preset) return
+    if (isDirty && !window.confirm('未保存の入力をプリセット内容で置き換えますか？')) {
+      return
+    }
+    replace(presetToWorkoutExercises(preset))
+    setSelectedPresetId(presetId)
+    setActionError(null)
+  }
 
   function addExercise() {
     const nextExercise = exercises.find((exercise) => !selectedIds.includes(exercise.id))
@@ -94,6 +110,13 @@ export function WorkoutForm({ exercises, initialSession }: WorkoutFormProps) {
 
   return (
     <form className="space-y-8" onSubmit={handleSubmit(submitWorkout)} noValidate>
+      {presets ? (
+        <PresetSelector
+          presets={presets}
+          selectedPresetId={selectedPresetId}
+          onSelect={selectPreset}
+        />
+      ) : null}
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="workout-date">トレーニング日</Label>

@@ -32,6 +32,29 @@ const EXERCISES = [
   },
 ]
 
+const PRESETS = [
+  {
+    id: 'preset-1',
+    name: '全身',
+    items: [
+      {
+        exerciseId: EXERCISES[1]?.id ?? '',
+        orderIndex: 0,
+        defaultWeight: 100,
+        defaultReps: 5,
+        defaultSets: 2,
+      },
+      {
+        exerciseId: EXERCISES[0]?.id ?? '',
+        orderIndex: 1,
+        defaultWeight: null,
+        defaultReps: null,
+        defaultSets: 1,
+      },
+    ],
+  },
+]
+
 describe('WorkoutForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -152,5 +175,50 @@ describe('WorkoutForm', () => {
       date: '2026-07-05',
     })
     expect(mocks.push).toHaveBeenCalledWith('/log/2026-07-05')
+  })
+
+  it('expands a selected preset while keeping all fields editable', () => {
+    render(<WorkoutForm exercises={EXERCISES} presets={PRESETS} />)
+
+    fireEvent.change(screen.getByLabelText('プリセット'), { target: { value: 'preset-1' } })
+
+    expect(screen.getAllByRole('group', { name: /種目/ })).toHaveLength(2)
+    expect(screen.getAllByLabelText('種目')[0]).toHaveValue(EXERCISES[1]?.id)
+    expect(screen.getAllByLabelText(/重量/)[0]).toHaveValue(100)
+    expect(screen.getAllByLabelText(/重量/)[1]).toHaveValue(100)
+    expect(screen.getAllByLabelText(/重量/)[2]).toHaveValue(0)
+
+    fireEvent.change(screen.getAllByLabelText(/重量/)[0]!, { target: { value: '105' } })
+    expect(screen.getAllByLabelText(/重量/)[0]).toHaveValue(105)
+  })
+
+  it('keeps unsaved manual input when preset replacement is cancelled', () => {
+    const confirm = vi.fn(() => false)
+    vi.stubGlobal('confirm', confirm)
+    render(<WorkoutForm exercises={EXERCISES} presets={PRESETS} />)
+
+    fireEvent.change(screen.getByLabelText('セット1の重量（kg）'), {
+      target: { value: '80' },
+    })
+    fireEvent.change(screen.getByLabelText('プリセット'), { target: { value: 'preset-1' } })
+
+    expect(confirm).toHaveBeenCalledOnce()
+    expect(screen.getByLabelText('セット1の重量（kg）')).toHaveValue(80)
+    expect(screen.getByLabelText('プリセット')).toHaveValue('')
+  })
+
+  it('replaces unsaved input after confirmation', () => {
+    const confirm = vi.fn(() => true)
+    vi.stubGlobal('confirm', confirm)
+    render(<WorkoutForm exercises={EXERCISES} presets={PRESETS} />)
+
+    fireEvent.change(screen.getByLabelText('セット1のレップ数'), {
+      target: { value: '12' },
+    })
+    fireEvent.change(screen.getByLabelText('プリセット'), { target: { value: 'preset-1' } })
+
+    expect(confirm).toHaveBeenCalledOnce()
+    expect(screen.getAllByLabelText(/レップ数/)[0]).toHaveValue(5)
+    expect(screen.getByLabelText('プリセット')).toHaveValue('preset-1')
   })
 })

@@ -5,12 +5,30 @@ import { createClient } from '@/lib/supabase/server'
 
 export default async function NewWorkoutPage() {
   const supabase = await createClient()
-  const { data: exercises, error } = await supabase
-    .from('exercises')
-    .select('*')
-    .order('name', { ascending: true })
+  const [exercisesResult, presetsResult] = await Promise.all([
+    supabase.from('exercises').select('*').order('name', { ascending: true }),
+    supabase
+      .from('presets')
+      .select(
+        'id,name,preset_items(exercise_id,order_index,default_weight,default_reps,default_sets)'
+      )
+      .order('name', { ascending: true }),
+  ])
 
-  if (error) throw new Error('種目一覧を取得できませんでした')
+  if (exercisesResult.error) throw new Error('種目一覧を取得できませんでした')
+  if (presetsResult.error) throw new Error('プリセット一覧を取得できませんでした')
+
+  const presets = presetsResult.data.map((preset) => ({
+    id: preset.id,
+    name: preset.name,
+    items: preset.preset_items.map((item) => ({
+      exerciseId: item.exercise_id,
+      orderIndex: item.order_index,
+      defaultWeight: item.default_weight,
+      defaultReps: item.default_reps,
+      defaultSets: item.default_sets,
+    })),
+  }))
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
@@ -27,8 +45,8 @@ export default async function NewWorkoutPage() {
         </Link>
       </header>
 
-      {exercises.length > 0 ? (
-        <WorkoutForm exercises={exercises} />
+      {exercisesResult.data.length > 0 ? (
+        <WorkoutForm exercises={exercisesResult.data} presets={presets} />
       ) : (
         <section className="rounded-xl border bg-card p-6 text-center shadow-sm">
           <h2 className="text-lg font-semibold">種目が登録されていません</h2>
