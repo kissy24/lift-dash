@@ -62,6 +62,42 @@ describe('presetToWorkoutExercises', () => {
     ).toEqual([{ exerciseId: 'exercise-1', sets: [{ weight: 0, reps: 1 }] }])
   })
 
+  it('prefers previous values over preset defaults', () => {
+    expect(
+      presetToWorkoutExercises(
+        {
+          id: 'preset-1',
+          name: '胸',
+          items: [
+            {
+              exerciseId: 'exercise-1',
+              orderIndex: 0,
+              defaultWeight: 60,
+              defaultReps: 10,
+              defaultSets: 3,
+            },
+          ],
+        },
+        {
+          'exercise-1': {
+            sets: [
+              { weight: 65, reps: 8 },
+              { weight: 62.5, reps: 9 },
+            ],
+          },
+        }
+      )
+    ).toEqual([
+      {
+        exerciseId: 'exercise-1',
+        sets: [
+          { weight: 65, reps: 8 },
+          { weight: 62.5, reps: 9 },
+        ],
+      },
+    ])
+  })
+
   it('does not share set objects that could mutate sibling sets', () => {
     const exercises = presetToWorkoutExercises({
       id: 'preset-1',

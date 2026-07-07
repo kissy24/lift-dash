@@ -13,7 +13,12 @@ import { Select } from '@/components/ui/Select'
 import { createWorkoutAction, updateWorkoutAction } from '@/lib/actions/workout'
 import type { Exercise } from '@/lib/supabase/database.types'
 import { updateWorkoutSessionSchema, workoutSessionSchema } from '@/lib/validations/workout'
-import { presetToWorkoutExercises, type WorkoutPreset } from '@/lib/workouts/preset-defaults'
+import {
+  presetToWorkoutExercises,
+  workoutExerciseDefaultsFor,
+  type WorkoutPreset,
+} from '@/lib/workouts/preset-defaults'
+import type { WorkoutPreviousValues } from '@/lib/workouts/previous-values'
 
 type WorkoutFormValues = {
   date: string
@@ -28,13 +33,17 @@ type WorkoutFormProps = {
   exercises: Exercise[]
   initialSession?: WorkoutFormInitialSession
   presets?: WorkoutPreset[]
+  previousValues?: WorkoutPreviousValues
 }
 
 export type WorkoutFormInitialSession = WorkoutFormValues & { id: string }
 
-const EMPTY_SET = { weight: 0, reps: 1 }
-
-export function WorkoutForm({ exercises, initialSession, presets }: WorkoutFormProps) {
+export function WorkoutForm({
+  exercises,
+  initialSession,
+  presets,
+  previousValues = {},
+}: WorkoutFormProps) {
   const router = useRouter()
   const [actionError, setActionError] = useState<string | null>(null)
   const [selectedPresetId, setSelectedPresetId] = useState('')
@@ -45,7 +54,7 @@ export function WorkoutForm({ exercises, initialSession, presets }: WorkoutFormP
         date: initialSession?.date ?? format(new Date(), 'yyyy-MM-dd'),
         notes: initialSession?.notes ?? '',
         exercises: initialSession?.exercises ?? [
-          { exerciseId: exercises[0]?.id ?? '', sets: [EMPTY_SET] },
+          workoutExerciseDefaultsFor(exercises[0]?.id ?? '', previousValues),
         ],
       },
     })
@@ -60,7 +69,7 @@ export function WorkoutForm({ exercises, initialSession, presets }: WorkoutFormP
     if (isDirty && !window.confirm('未保存の入力をプリセット内容で置き換えますか？')) {
       return
     }
-    replace(presetToWorkoutExercises(preset))
+    replace(presetToWorkoutExercises(preset, previousValues))
     setSelectedPresetId(presetId)
     setActionError(null)
   }
@@ -68,13 +77,15 @@ export function WorkoutForm({ exercises, initialSession, presets }: WorkoutFormP
   function addExercise() {
     const nextExercise = exercises.find((exercise) => !selectedIds.includes(exercise.id))
     if (!nextExercise) return
-    append({ exerciseId: nextExercise.id, sets: [EMPTY_SET] })
+    append(workoutExerciseDefaultsFor(nextExercise.id, previousValues))
   }
 
   function addSet(exerciseIndex: number) {
     const sets = getValues(`exercises.${exerciseIndex}.sets`)
     if (sets.length >= 20) return
-    setValue(`exercises.${exerciseIndex}.sets`, [...sets, EMPTY_SET], { shouldDirty: true })
+    setValue(`exercises.${exerciseIndex}.sets`, [...sets, { weight: 0, reps: 1 }], {
+      shouldDirty: true,
+    })
   }
 
   function removeSet(exerciseIndex: number) {

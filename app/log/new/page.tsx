@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { WorkoutForm } from '@/components/forms/WorkoutForm'
+import { getPreviousValuesByExercise } from '@/lib/queries/workout'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function NewWorkoutPage() {
@@ -17,6 +18,11 @@ export default async function NewWorkoutPage() {
 
   if (exercisesResult.error) throw new Error('種目一覧を取得できませんでした')
   if (presetsResult.error) throw new Error('プリセット一覧を取得できませんでした')
+
+  const previousValues = await getPreviousValuesByExercise(
+    supabase,
+    exercisesResult.data.map((exercise) => exercise.id)
+  )
 
   const presets = presetsResult.data.map((preset) => ({
     id: preset.id,
@@ -46,7 +52,11 @@ export default async function NewWorkoutPage() {
       </header>
 
       {exercisesResult.data.length > 0 ? (
-        <WorkoutForm exercises={exercisesResult.data} presets={presets} />
+        <WorkoutForm
+          exercises={exercisesResult.data}
+          presets={presets}
+          previousValues={previousValues}
+        />
       ) : (
         <section className="rounded-xl border bg-card p-6 text-center shadow-sm">
           <h2 className="text-lg font-semibold">種目が登録されていません</h2>

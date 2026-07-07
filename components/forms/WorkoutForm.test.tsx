@@ -192,6 +192,59 @@ describe('WorkoutForm', () => {
     expect(screen.getAllByLabelText(/重量/)[0]).toHaveValue(105)
   })
 
+  it('prefers previous values when expanding a selected preset', () => {
+    render(
+      <WorkoutForm
+        exercises={EXERCISES}
+        presets={PRESETS}
+        previousValues={{
+          [EXERCISES[1]?.id ?? '']: {
+            sets: [
+              { weight: 110, reps: 3 },
+              { weight: 105, reps: 5 },
+              { weight: 100, reps: 7 },
+            ],
+          },
+        }}
+      />
+    )
+
+    fireEvent.change(screen.getByLabelText('プリセット'), { target: { value: 'preset-1' } })
+
+    expect(screen.getAllByRole('group', { name: /種目/ })).toHaveLength(2)
+    expect(screen.getAllByLabelText('種目')[0]).toHaveValue(EXERCISES[1]?.id)
+    expect(screen.getAllByLabelText(/重量/)[0]).toHaveValue(110)
+    expect(screen.getAllByLabelText(/重量/)[1]).toHaveValue(105)
+    expect(screen.getAllByLabelText(/重量/)[2]).toHaveValue(100)
+    expect(screen.getAllByLabelText(/重量/)[3]).toHaveValue(0)
+
+    fireEvent.change(screen.getAllByLabelText(/重量/)[0]!, { target: { value: '112.5' } })
+    expect(screen.getAllByLabelText(/重量/)[0]).toHaveValue(112.5)
+  })
+
+  it('uses previous values when manually adding an exercise', () => {
+    render(
+      <WorkoutForm
+        exercises={EXERCISES}
+        previousValues={{
+          [EXERCISES[1]?.id ?? '']: {
+            sets: [
+              { weight: 120, reps: 4 },
+              { weight: 115, reps: 5 },
+            ],
+          },
+        }}
+      />
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: '種目を追加' }))
+
+    expect(screen.getAllByRole('group', { name: /種目/ })).toHaveLength(2)
+    expect(screen.getAllByLabelText('種目')[1]).toHaveValue(EXERCISES[1]?.id)
+    expect(screen.getAllByLabelText(/重量/)[1]).toHaveValue(120)
+    expect(screen.getAllByLabelText(/重量/)[2]).toHaveValue(115)
+  })
+
   it('keeps unsaved manual input when preset replacement is cancelled', () => {
     const confirm = vi.fn(() => false)
     vi.stubGlobal('confirm', confirm)
