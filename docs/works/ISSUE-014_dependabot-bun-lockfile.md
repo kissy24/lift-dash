@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #36
-- PR: 未作成
+- PR: #37
 - ブランチ: `chore/ISSUE-014_dependabot-bun-lockfile`
 
 ## 実施日
@@ -38,7 +38,7 @@
 - `bun run test:run`: PASS（41 files / 153 tests）
 - `NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key bun run build`: PASS
 - `osv-scanner scan source -L bun.lock`: PASS（793 packages / No issues found）
-- GitHub Actions: 未実施
+- GitHub Actions: PR作成後に実行
 
 ## 注意事項
 
