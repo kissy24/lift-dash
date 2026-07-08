@@ -1,10 +1,18 @@
 import { format, parseISO } from 'date-fns'
 import Link from 'next/link'
 
+import { WorkoutCalendar } from '@/components/workouts/WorkoutCalendar'
 import { createClient } from '@/lib/supabase/server'
+import { buildWorkoutCalendar, parseWorkoutCalendarMonth } from '@/lib/workouts/calendar'
 import { summarizeWorkoutDates } from '@/lib/workouts/summarize-workout-dates'
 
-export default async function WorkoutLogPage() {
+type WorkoutLogPageProps = {
+  searchParams?: Promise<{ month?: string | string[] }>
+}
+
+export default async function WorkoutLogPage({ searchParams }: WorkoutLogPageProps) {
+  const params = await searchParams
+  const month = Array.isArray(params?.month) ? params.month[0] : params?.month
   const supabase = await createClient()
   const { data: sessions, error } = await supabase
     .from('workout_sessions')
@@ -15,6 +23,10 @@ export default async function WorkoutLogPage() {
   if (error) throw new Error('トレーニング記録を取得できませんでした')
 
   const summaries = summarizeWorkoutDates(sessions)
+  const calendar = buildWorkoutCalendar({
+    visibleMonth: parseWorkoutCalendarMonth(month),
+    summaries,
+  })
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
@@ -31,6 +43,10 @@ export default async function WorkoutLogPage() {
           記録を追加
         </Link>
       </header>
+
+      <div className="mb-8">
+        <WorkoutCalendar calendar={calendar} />
+      </div>
 
       {summaries.length > 0 ? (
         <ul className="space-y-4">
