@@ -8,9 +8,13 @@ const mocks = vi.hoisted(() => ({
   exercisesOrder: vi.fn(),
   presetsSelect: vi.fn(),
   presetsOrder: vi.fn(),
+  getPreviousValuesByExercise: vi.fn(),
 }))
 
 vi.mock('@/lib/supabase/server', () => ({ createClient: mocks.createClient }))
+vi.mock('@/lib/queries/workout', () => ({
+  getPreviousValuesByExercise: mocks.getPreviousValuesByExercise,
+}))
 vi.mock('@/lib/actions/workout', () => ({
   createWorkoutAction: vi.fn(),
   updateWorkoutAction: vi.fn(),
@@ -29,6 +33,7 @@ describe('NewWorkoutPage', () => {
     mocks.exercisesSelect.mockReturnValue({ order: mocks.exercisesOrder })
     mocks.presetsSelect.mockReturnValue({ order: mocks.presetsOrder })
     mocks.presetsOrder.mockResolvedValue({ data: [], error: null })
+    mocks.getPreviousValuesByExercise.mockResolvedValue({})
   })
 
   it('loads exercises and renders the manual workout form', async () => {
@@ -70,6 +75,33 @@ describe('NewWorkoutPage', () => {
     expect(screen.getByRole('option', { name: '胸の日' })).toBeInTheDocument()
     expect(mocks.from).toHaveBeenCalledWith('exercises')
     expect(mocks.from).toHaveBeenCalledWith('presets')
+    expect(mocks.getPreviousValuesByExercise).toHaveBeenCalledWith(
+      expect.objectContaining({ from: mocks.from }),
+      ['5f768f8b-91b9-473a-aeca-3d1934e26a8f']
+    )
+  })
+
+  it('passes previous values to the workout form', async () => {
+    mocks.exercisesOrder.mockResolvedValue({
+      data: [
+        {
+          id: '5f768f8b-91b9-473a-aeca-3d1934e26a8f',
+          name: 'ベンチプレス',
+          muscle_group: 'chest',
+          created_at: '2026-06-27T00:00:00Z',
+          updated_at: '2026-06-27T00:00:00Z',
+        },
+      ],
+      error: null,
+    })
+    mocks.getPreviousValuesByExercise.mockResolvedValue({
+      '5f768f8b-91b9-473a-aeca-3d1934e26a8f': { sets: [{ weight: 70, reps: 8 }] },
+    })
+
+    render(await NewWorkoutPage())
+
+    expect(screen.getByLabelText('セット1の重量（kg）')).toHaveValue(70)
+    expect(screen.getByLabelText('セット1のレップ数')).toHaveValue(8)
   })
 
   it('guides the user to create an exercise when the master is empty', async () => {

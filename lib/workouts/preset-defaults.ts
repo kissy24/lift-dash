@@ -1,3 +1,5 @@
+import type { WorkoutPreviousValues } from './previous-values'
+
 export type WorkoutPreset = {
   id: string
   name: string
@@ -15,14 +17,29 @@ export type WorkoutExerciseDefaults = {
   sets: Array<{ weight: number; reps: number }>
 }
 
-export function presetToWorkoutExercises(preset: WorkoutPreset): WorkoutExerciseDefaults[] {
+export function presetToWorkoutExercises(
+  preset: WorkoutPreset,
+  previousValues: WorkoutPreviousValues = {}
+): WorkoutExerciseDefaults[] {
   return [...preset.items]
     .sort((a, b) => a.orderIndex - b.orderIndex)
     .map((item) => ({
       exerciseId: item.exerciseId,
-      sets: Array.from({ length: item.defaultSets }, () => ({
-        weight: item.defaultWeight ?? 0,
-        reps: item.defaultReps ?? 1,
-      })),
+      sets: previousValues[item.exerciseId]?.sets.map((set) => ({ ...set })) ?? [
+        ...Array.from({ length: item.defaultSets }, () => ({
+          weight: item.defaultWeight ?? 0,
+          reps: item.defaultReps ?? 1,
+        })),
+      ],
     }))
+}
+
+export function workoutExerciseDefaultsFor(
+  exerciseId: string,
+  previousValues: WorkoutPreviousValues = {}
+): WorkoutExerciseDefaults {
+  return {
+    exerciseId,
+    sets: previousValues[exerciseId]?.sets.map((set) => ({ ...set })) ?? [{ weight: 0, reps: 1 }],
+  }
 }
