@@ -141,6 +141,30 @@ describe('buildDashboardMetrics', () => {
     ])
   })
 
+  it('uses an explicit start date for frequency and muscle group metrics', () => {
+    const metrics = buildDashboardMetrics(
+      [
+        ...SESSIONS,
+        {
+          id: 'session-old',
+          date: '2026-05-01',
+          workout_sets: [
+            {
+              id: 'set-old',
+              weight: 200,
+              reps: 2,
+              exercises: { id: 'deadlift', name: 'デッドリフト', muscle_group: 'back' },
+            },
+          ],
+        },
+      ],
+      { referenceDate: new Date('2026-07-08'), startDate: '2026-05-01' }
+    )
+
+    expect(metrics.frequency.at(0)).toEqual({ date: '2026-05-01', sessionCount: 1 })
+    expect(metrics.muscleGroupVolumes).toContainEqual({ muscleGroup: 'back', volume: 400 })
+  })
+
   it('returns empty metrics when there are no sessions', () => {
     expect(buildDashboardMetrics([], { referenceDate: new Date('2026-07-08') })).toEqual({
       maxWeightByExercise: [],
