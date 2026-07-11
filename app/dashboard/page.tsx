@@ -2,23 +2,31 @@ import Link from 'next/link'
 
 import { DashboardCharts } from '@/components/charts/DashboardCharts'
 import { LogoutButton } from '@/components/forms/LogoutButton'
+import { PersonalRecordCards } from '@/components/workouts/PersonalRecordCards'
 import { createClient } from '@/lib/supabase/server'
 import {
   buildDashboardMetrics,
   type DashboardWorkoutSession,
 } from '@/lib/workouts/dashboard-metrics'
+import {
+  buildPersonalRecords,
+  type PersonalRecordWorkoutSession,
+} from '@/lib/workouts/personal-records'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: sessions, error } = await supabase
     .from('workout_sessions')
-    .select('id,date,workout_sets(id,weight,reps,exercises(id,name,muscle_group))')
+    .select(
+      'id,date,created_at,workout_sets(id,weight,reps,created_at,exercises(id,name,muscle_group))'
+    )
     .order('date', { ascending: true })
     .order('created_at', { ascending: true })
 
   if (error) throw new Error('ダッシュボード指標を取得できませんでした')
 
   const metrics = buildDashboardMetrics((sessions ?? []) as DashboardWorkoutSession[])
+  const personalRecords = buildPersonalRecords((sessions ?? []) as PersonalRecordWorkoutSession[])
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-5xl px-6 py-10">
@@ -45,6 +53,7 @@ export default async function DashboardPage() {
         </div>
       </header>
 
+      <PersonalRecordCards records={personalRecords} />
       <DashboardCharts metrics={metrics} />
     </main>
   )

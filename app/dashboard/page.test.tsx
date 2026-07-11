@@ -24,6 +24,14 @@ vi.mock('@/components/charts/DashboardCharts', () => ({
     </section>
   ),
 }))
+vi.mock('@/components/workouts/PersonalRecordCards', () => ({
+  PersonalRecordCards: ({ records }: { records: Array<{ exerciseName: string }> }) => (
+    <section>
+      <h2>自己ベスト</h2>
+      <p>{records.map((record) => record.exerciseName).join(',')}</p>
+    </section>
+  ),
+}))
 vi.mock('@/lib/supabase/server', () => ({ createClient: mocks.createClient }))
 
 import DashboardPage from './page'
@@ -52,11 +60,13 @@ describe('DashboardPage', () => {
         {
           id: 'session-1',
           date: '2026-07-01',
+          created_at: '2026-07-01T09:00:00Z',
           workout_sets: [
             {
               id: 'set-1',
               weight: 60,
               reps: 10,
+              created_at: '2026-07-01T09:01:00Z',
               exercises: { id: 'bench', name: 'ベンチプレス', muscle_group: 'chest' },
             },
           ],
@@ -69,9 +79,11 @@ describe('DashboardPage', () => {
 
     expect(mocks.from).toHaveBeenCalledWith('workout_sessions')
     expect(mocks.select).toHaveBeenCalledWith(
-      'id,date,workout_sets(id,weight,reps,exercises(id,name,muscle_group))'
+      'id,date,created_at,workout_sets(id,weight,reps,created_at,exercises(id,name,muscle_group))'
     )
     expect(screen.getByRole('heading', { name: 'ダッシュボード指標' })).toBeInTheDocument()
     expect(screen.getByText('1日分')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '自己ベスト' })).toBeInTheDocument()
+    expect(screen.getByText('ベンチプレス')).toBeInTheDocument()
   })
 })
