@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #34
-- PR: 作成後に追記
+- PR: #43
 - ブランチ: `feat/ISSUE-012_dashboard-filters`
 
 ## 実施日
@@ -29,7 +29,7 @@
 
 ## 主なコミット
 
-- コミット後に追記
+- `d0fda79 feat(dashboard): add range and exercise filters (#34)`
 
 ## 検証結果
 
@@ -38,7 +38,7 @@
 - `bun run lint`: PASS（ESLint warnings 0）
 - `bun run test:run`: PASS（45 files / 167 tests）
 - `NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key bun run build`: PASS
-- GitHub Actions: PR作成後に確認
+- GitHub Actions Quality: PASS
 
 ## 注意事項
 
