@@ -8,6 +8,7 @@ on:
       - synchronize
 
 permissions:
+  actions: write
   contents: write
   pull-requests: read
 
@@ -46,3 +47,8 @@ jobs:
           git add bun.lock
           git commit -m "chore(deps): update bun lockfile"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
+      - name: Run Quality workflow for updated branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: gh workflow run quality.yml --ref "$HEAD_REF"

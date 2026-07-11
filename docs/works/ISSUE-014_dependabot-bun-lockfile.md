@@ -28,7 +28,9 @@
 
 ## 主なコミット
 
-- 未コミット
+- `e2e0338 fix(deps): repair dependabot bun lockfile flow (#36)`
+- `3602328 docs(deps): record dependabot lockfile PR (#36)`
+- `6289eec Merge pull request #37 from kissy24/chore/ISSUE-014_dependabot-bun-lockfile`
 
 ## 検証結果
 
@@ -38,9 +40,10 @@
 - `bun run test:run`: PASS（41 files / 153 tests）
 - `NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key bun run build`: PASS
 - `osv-scanner scan source -L bun.lock`: PASS（793 packages / No issues found）
-- GitHub Actions: PR作成後に実行
+- GitHub Actions Quality: PASS
 
 ## 注意事項
 
 - Dependabotの依存更新PRは、`bun.lock`更新が含まれていることをQuality CIで確認してからマージする
 - `eslint-config-next`のmajor更新は、Next.js本体およびESLint major更新とセットで扱う
+- `GITHUB_TOKEN`によるlockfile更新commitは別workflowを自動起動しないため、後続のISSUE-015で更新後HEADのQuality起動を追加する
