@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #40
-- PR: 作成後に追記
+- PR: #41
 - ブランチ: `chore/ISSUE-015_dependabot-quality-after-lockfile`
 
 ## 実施日
@@ -26,7 +26,7 @@
 
 ## 主なコミット
 
-- コミット後に追記
+- `32c8535 ci(deps): dispatch quality after lockfile update (#40)`
 
 ## 検証結果
 
