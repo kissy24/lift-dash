@@ -35,6 +35,7 @@ export type DashboardMetrics = {
 
 export type BuildDashboardMetricsOptions = {
   referenceDate?: Date
+  startDate?: string
 }
 
 type ExerciseBucket = {
@@ -53,7 +54,7 @@ export function buildDashboardMetrics(
   const muscleGroupVolumes = new Map<MuscleGroup, number>()
   const weeklyVolumes = new Map<string, number>()
   const referenceDate = startOfDay(options.referenceDate ?? new Date())
-  const recentStart = subDays(referenceDate, 29)
+  const recentStart = options.startDate ? parseISO(options.startDate) : subDays(referenceDate, 29)
 
   sessions.forEach((session) => {
     frequencyByDate.set(session.date, (frequencyByDate.get(session.date) ?? 0) + 1)
