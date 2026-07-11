@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #32
-- PR: 作成後に追記
+- PR: #42
 - ブランチ: `feat/ISSUE-011_pr-card`
 
 ## 実施日
@@ -26,7 +26,7 @@
 
 ## 主なコミット
 
-- コミット後に追記
+- `7304b56 feat(dashboard): add personal record cards (#32)`
 
 ## 検証結果
 
@@ -35,7 +35,7 @@
 - `bun run lint`: PASS（ESLint warnings 0）
 - `bun run test:run`: PASS（43 files / 158 tests）
 - `NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key bun run build`: PASS
-- GitHub Actions: PR作成後に確認
+- GitHub Actions Quality: PASS
 
 ## 注意事項
 
