@@ -10,14 +10,14 @@
 
 ## 受け入れ条件 (Acceptance Criteria)
 
-- [ ] `next`と`eslint-config-next`が脆弱性修正版へ同一バージョンで更新されている
-- [ ] `postcss`と脆弱な推移依存が修正版へ更新されている
-- [ ] `bun.lock`から検出対象の脆弱バージョンが除去されている
-- [ ] `bun install --frozen-lockfile`が成功する
-- [ ] OSV Scannerで既知脆弱性が検出されない
-- [ ] `bun run type-check`、`bun run lint`、`bun run test:run`、`bun run build`が成功する
-- [ ] GitHub ActionsのQualityとSecurity Auditが成功する
-- [ ] 対応するテストがすべてグリーン
+- [x] `next`と`eslint-config-next`が脆弱性修正版へ同一バージョンで更新されている
+- [x] `postcss`と脆弱な推移依存が修正版へ更新されている
+- [x] `bun.lock`から検出対象の脆弱バージョンが除去されている
+- [x] `bun install --frozen-lockfile`が成功する
+- [x] OSV Scannerで既知脆弱性が検出されない
+- [x] `bun run type-check`、`bun run lint`、`bun run test:run`、`bun run build`が成功する
+- [x] GitHub ActionsのQualityとSecurity Auditが成功する
+- [x] 対応するテストがすべてグリーン
 
 ## 技術詳細
 

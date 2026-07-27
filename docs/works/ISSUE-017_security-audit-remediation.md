@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #48 `[ISSUE-017] Security Audit脆弱性対応`
-- PR: 作成予定
+- PR: #49 `fix(deps): remediate security audit vulnerabilities (#48)`
 - ブランチ: `fix/ISSUE-017_security-audit-remediation`
 
 ## 実施日
@@ -39,7 +39,7 @@
 
 ## 主なコミット
 
-- 作成予定
+- `835d855` `fix(deps): remediate security audit vulnerabilities (#48)`
 
 ## 検証結果
 
@@ -52,7 +52,8 @@
 - `bun run build`: 成功
 - サブエージェントによるコミット前確認: 成功
 - `commitlint`設定読み込み・コミットメッセージ検証: 成功
-- GitHub Actions: 確認予定
+- GitHub Actions Quality run `30271811391`: 成功
+- GitHub Actions Security Audit run `30271784196`: 成功
 
 ## 注意事項
 
