@@ -24,7 +24,7 @@
     "clsx": "2.1.1",
     "date-fns": "4.1.0",
     "lucide-react": "0.552.0",
-    "next": "15.5.19",
+    "next": "15.5.21",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-hook-form": "7.80.0",
@@ -45,19 +45,23 @@
     "@vitest/coverage-v8": "3.2.6",
     "autoprefixer": "10.5.2",
     "eslint": "8.57.1",
-    "eslint-config-next": "15.5.19",
+    "eslint-config-next": "15.5.21",
     "eslint-plugin-import": "2.32.0",
     "husky": "9.1.7",
     "jsdom": "29.1.1",
     "lint-staged": "16.2.7",
-    "postcss": "8.5.15",
+    "postcss": "8.5.18",
     "prettier": "3.7.4",
     "tailwindcss": "3.4.18",
     "typescript": "5.9.3",
     "vitest": "3.2.6"
   },
   "overrides": {
-    "postcss": "8.5.15"
+    "brace-expansion": "5.0.8",
+    "fast-uri": "3.1.4",
+    "js-yaml": "4.3.0",
+    "postcss": "8.5.18",
+    "sharp": "0.35.0"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -67,5 +71,8 @@
     "*.{json,md,css,yaml,yml}": [
       "bunx prettier --write"
     ]
+  },
+  "patchedDependencies": {
+    "brace-expansion@5.0.8": "patches/brace-expansion@5.0.8.patch"
   }
 }
