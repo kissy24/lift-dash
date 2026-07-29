@@ -4,7 +4,7 @@
 
 - GitHub Issue: #50 `[ISSUE-018] Dependabot開発ツール依存の整合化`
 - 置き換え対象PR: #17、#18、#46、#47
-- PR: 作成予定
+- PR: #51 `chore(deps): align Dependabot toolchain updates`
 - ブランチ: `chore/ISSUE-018_dependabot-toolchain-alignment`
 
 ## 実施日
@@ -19,6 +19,8 @@
 - commitlint 21のengine要件に合わせ、READMEのNode.js要件を`22.12.0`以上へ更新した。
 - 依存バージョンの整合性とcommit-msgフックのvalid/invalid判定を検証する回帰テストを追加した。
 - Bun `1.2.0`で`bun.lock`を再生成した。
+- 後継PR #51のQuality、Security Audit、OSV Scanner成功を確認した。
+- 置き換え対象PR #17、#18、#46、#47に対応内容と後継PRをコメントし、クローズした。
 
 ## 発生した問題と対応
 
@@ -39,7 +41,7 @@
 
 ## 主なコミット
 
-- 作成予定
+- `738aa7e` chore(deps): align development toolchain updates (#50)
 
 ## 検証結果
 
@@ -53,7 +55,9 @@
 - `bun run build`: 成功
 - OSV Scanner: 成功（723 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功（47 files / 175 tests）
-- GitHub Actions: 確認予定
+- GitHub Actions Quality: 成功（run `30443273711`）
+- GitHub Actions Security Audit: 成功（run `30443249695`）
+- GitHub Actions OSV Scanner: 成功
 
 ## 注意事項
 

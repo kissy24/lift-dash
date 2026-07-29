@@ -19,8 +19,8 @@
 - [x] `bun install --frozen-lockfile`が成功し、`bun.lock`が再生成されない
 - [x] `bun run type-check`、`bun run lint`、`bun run test:run`、`bun run test:coverage`、`bun run build`が成功する
 - [x] OSV Scannerで既知脆弱性が検出されない
-- [ ] GitHub ActionsのQualityとSecurity Auditが成功する
-- [ ] 置き換え対象のDependabot PR #17、#18、#46、#47に後継PRを案内し、クローズする
+- [x] GitHub ActionsのQualityとSecurity Auditが成功する
+- [x] 置き換え対象のDependabot PR #17、#18、#46、#47に後継PRを案内し、クローズする
 - [x] 対応するテストがすべてグリーン
 
 ## 技術詳細
