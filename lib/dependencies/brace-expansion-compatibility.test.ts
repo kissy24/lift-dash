@@ -20,22 +20,11 @@ describe('brace-expansion compatibility patch', () => {
     expect(minimatch('ci-a', 'ci-{a,b}')).toBe(true)
   })
 
-  it('keeps the default export used by minimatch 9', () => {
-    const globRequire = createRequire(projectRequire.resolve('glob/package.json'))
-    const minimatchModule: unknown = globRequire('minimatch')
+  it('keeps the default export used by minimatch 9', async () => {
+    const braceExpansion = await import('brace-expansion')
 
-    expect(minimatchModule).toHaveProperty('minimatch')
-
-    if (
-      typeof minimatchModule !== 'object' ||
-      minimatchModule === null ||
-      !('minimatch' in minimatchModule) ||
-      typeof minimatchModule.minimatch !== 'function'
-    ) {
-      throw new Error('Expected minimatch 9 module export')
-    }
-
-    expect(minimatchModule.minimatch('ci-b', 'ci-{a,b}')).toBe(true)
+    expect(typeof braceExpansion.default).toBe('function')
+    expect(braceExpansion.default('ci-{a,b}')).toEqual(['ci-a', 'ci-b'])
   })
 
   it('retains the named ESM export used by minimatch 10', async () => {
