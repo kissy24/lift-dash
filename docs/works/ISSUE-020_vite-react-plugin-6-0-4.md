@@ -4,7 +4,7 @@
 
 - GitHub Issue: #57 `[ISSUE-020] Vite Reactプラグイン6.0.4更新`
 - 置き換え対象PR: #53
-- PR: 作成予定
+- PR: #62
 - ブランチ: `chore/ISSUE-020_vite-react-plugin-6-0-4`
 
 ## 実施日
@@ -28,7 +28,7 @@
 
 ## 主なコミット
 
-- `chore(deps): update vite react plugin to 6.0.4 (#57)`
+- `c1f3779 chore(deps): update vite react plugin to 6.0.4 (#57)`
 
 ## 検証結果
 
@@ -42,8 +42,9 @@
 - `bun run build`: 成功
 - OSV Scanner: 成功（722 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功（型チェック、lint、47 files / 175 tests）
-- GitHub Actions Quality: 実施予定
-- GitHub Actions Security Audit: 実施予定
+- GitHub Actions Quality: 成功（run 32400305384）
+- GitHub Actions Security Audit: 成功（run 32399873791）
+- GitHub Advanced Security OSV Scanner: 成功（run 96526628159）
 
 ## 注意事項
 
