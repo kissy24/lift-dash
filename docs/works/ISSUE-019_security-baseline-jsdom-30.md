@@ -4,12 +4,12 @@
 
 - GitHub Issue: #56 `[ISSUE-019] セキュリティ基準線回復とjsdom 30移行`
 - 置き換え対象PR: #55
-- PR: 作成予定
+- PR: #61
 - ブランチ: `chore/ISSUE-019_security-baseline-jsdom-30`
 
 ## 実施日
 
-- 2026-08-17
+- 2026-08-17〜2026-08-20
 
 ## 実施内容
 
@@ -39,7 +39,7 @@
 
 ## 主なコミット
 
-- `chore(deps): restore secure dependency baseline (#56)`
+- `302f889 chore(deps): restore secure dependency baseline (#56)`
 
 ## 検証結果
 
@@ -54,8 +54,9 @@
 - `bun run build`: 成功
 - OSV Scanner: 成功（722 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功（型チェック、lint、47 files / 175 tests）
-- GitHub Actions Quality: 実施予定
-- GitHub Actions Security Audit: 実施予定
+- GitHub Actions Quality: 成功（run 32357546829）
+- GitHub Actions Security Audit: 成功（run 32357513225）
+- GitHub Advanced Security OSV Scanner: 成功（run 96389881732）
 
 ## 注意事項
 
