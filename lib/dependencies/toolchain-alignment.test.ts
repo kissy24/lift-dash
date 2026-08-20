@@ -31,7 +31,7 @@ afterEach(() => {
 describe('development toolchain alignment', () => {
   it('pins compatible Vite and Vitest package versions', () => {
     expect(packageJson.devDependencies).toMatchObject({
-      '@vitejs/plugin-react': '6.0.3',
+      '@vitejs/plugin-react': '6.0.4',
       '@vitest/coverage-v8': '4.1.10',
       vite: '8.1.5',
       vitest: '4.1.10',
