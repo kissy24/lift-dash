@@ -52,11 +52,19 @@ describe('development toolchain alignment', () => {
     )
     const readme = readFileSync(path.resolve(process.cwd(), 'README.md'), 'utf8')
 
-    expect(packageJson.devDependencies['@types/node']).toBe('24.13.3')
+    expect(packageJson).toMatchObject({
+      devDependencies: {
+        '@types/node': '24.13.3',
+        jsdom: '30.0.1',
+      },
+      engines: {
+        node: '^22.22.2 || ^24.15.0 || >=26.0.0',
+      },
+    })
     expect(dependabotConfig).toMatch(
       /- dependency-name: ['"]?@types\/node['"]?\n\s+update-types:\n\s+- version-update:semver-major/
     )
-    expect(readme).toContain('Node.js 22.12.0以上')
+    expect(readme).toContain('Node.js `^22.22.2 || ^24.15.0 || >=26.0.0`')
   })
 })
 

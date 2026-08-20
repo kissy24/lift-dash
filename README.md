@@ -29,7 +29,7 @@ LiftDashは、種目・プリセット・セット単位のトレーニング記
 セットアップ前に次を用意してください。
 
 - [Bun](https://bun.sh/docs/installation) 1.2.0
-- Node.js 22.12.0以上（テスト・Lintなどの開発ツール実行用）
+- Node.js `^22.22.2 || ^24.15.0 || >=26.0.0`（テスト・Lintなどの開発ツール実行用）
 - [Supabase](https://supabase.com/)プロジェクト
 - [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started)
 - TOTPに対応した認証アプリ
