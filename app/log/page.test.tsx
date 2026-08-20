@@ -35,7 +35,7 @@ describe('WorkoutLogPage', () => {
       error: null,
     })
 
-    render(await WorkoutLogPage({}))
+    render(await WorkoutLogPage({ searchParams: Promise.resolve({ month: '2026-07' }) }))
 
     expect(screen.getByRole('heading', { level: 1, name: 'トレーニング記録' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /2026年7月5日/ })).toHaveAttribute(
