@@ -4,7 +4,7 @@
 
 - GitHub Issue: #66 `[ISSUE-023] PostCSS 8.5.26更新`
 - 置き換え対象PR: #59
-- PR: 作成後に記録
+- PR: #68
 - ブランチ: `chore/ISSUE-023_postcss-8-5-26`
 
 ## 実施日
@@ -31,7 +31,7 @@
 
 ## 主なコミット
 
-- コミット後に記録
+- `c05bc13 chore(deps): update postcss to 8.5.26 (#66)`
 
 ## 検証結果
 
@@ -46,7 +46,9 @@
 - `bun run build`: 成功（Next.js 15.5.21 / 13 routes）
 - OSV Scanner: 成功（743 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功（型チェック、lint warnings/errors 0、47 files / 177 tests）
-- GitHub Actions: PR作成後に記録
+- GitHub Actions Quality: 成功（run 32462107394）
+- GitHub Actions Security Audit: 成功（run 32462082056）
+- GitHub Advanced Security OSV Scanner: 成功（run 96710983018）
 
 ## 注意事項
 
