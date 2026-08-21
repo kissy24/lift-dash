@@ -3,7 +3,7 @@
 ## 対象
 
 - GitHub Issue: #64 `[ISSUE-022] Dependabot継続運用ルール整備`
-- PR: 作成後に記録
+- PR: #65
 - ブランチ: `docs/ISSUE-022_dependabot-continuous-maintenance`
 
 ## 実施日
@@ -24,7 +24,7 @@
 
 ## 主なコミット
 
-- コミット後に記録
+- `07e4c31 docs(deps): document dependabot maintenance workflow (#64)`
 
 ## 検証結果
 
@@ -38,7 +38,8 @@
 - `git diff --check`: 成功
 - Prettier: 対象Markdownすべて成功
 - サブエージェントによるコミット前確認: 成功（型チェック、lint warnings/errors 0、47 files / 176 tests）
-- GitHub Actions: PR作成後に記録
+- GitHub Actions Quality: 成功（run 32445313138）
+- GitHub Actions Security Audit: 文書のみの変更で対象pathに差分がないためPRでは未実行。直前の`main`で成功（run 32443022738）
 
 ## 注意事項
 
