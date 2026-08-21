@@ -61,6 +61,20 @@ describe('development toolchain alignment', () => {
     expect(legacyTypeScript.stdout.trim()).toBe('6.0.3')
   })
 
+  it('pins the verified PostCSS release for development and transitive consumers', () => {
+    expect(packageJson.devDependencies.postcss).toBe('8.5.26')
+    expect(packageJson.overrides.postcss).toBe('8.5.26')
+
+    const postcss = spawnSync(
+      process.execPath,
+      ['-e', "console.log(require('postcss/package.json').version)"],
+      { cwd: process.cwd(), encoding: 'utf8' }
+    )
+
+    expect(postcss.status, postcss.stderr).toBe(0)
+    expect(postcss.stdout.trim()).toBe('8.5.26')
+  })
+
   it('keeps commitlint packages on the same release line', () => {
     expect(packageJson.devDependencies).toMatchObject({
       '@commitlint/cli': '21.2.1',
