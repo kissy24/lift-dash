@@ -4,7 +4,7 @@
 
 - GitHub Issue: #67 `[ISSUE-024] lucide-react 1.31.0更新`
 - 置き換え対象PR: #60
-- PR: 作成後に記録
+- PR: #69
 - ブランチ: `chore/ISSUE-024_lucide-react-1-31-0`
 
 ## 実施日
@@ -39,7 +39,7 @@
 
 ## 主なコミット
 
-- コミット後に記録
+- `22e501d chore(deps): update lucide-react to 1.31.0 (#67)`
 
 ## 検証結果
 
@@ -55,7 +55,9 @@
 - `bun run build`: 成功（Next.js 15.5.21 / 13 routes）
 - OSV Scanner: 成功（743 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功（型チェック、lint warnings/errors 0、48 files / 179 tests）
-- GitHub Actions: PR作成後に記録
+- GitHub Actions Quality: 成功（run 32463039747）
+- GitHub Actions Security Audit: 成功（run 32463013272）
+- GitHub Advanced Security OSV Scanner: 成功（run 96713735166）
 
 ## 注意事項
 
