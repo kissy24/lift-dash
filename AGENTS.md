@@ -808,7 +808,51 @@ OSV Scanner が失敗した場合:
 - 公式配布物を使う場合は、checksum または署名を検証してから固定パスに配置する
 - `next build` などで生成された `next-env.d.ts` の差分が目的外の場合は、コミット対象に含めない
 
-### 10.5 `console.log` の禁止
+### 10.5 Dependabot PR の継続対応フロー
+
+Dependabot PRを確認・改修・マージする場合は、**必ず**`docs/dependabot-maintenance.md`の手順を使用する。Dependabotが作成した差分とCI結果だけを根拠にマージしてはならない。
+
+必須フロー:
+
+1. open中のDependabot PRをすべて棚卸しし、対象version、公開日、base/head、競合、check状態を確認する
+2. 最新`main`でfrozen install、Quality、OSV Scannerの基準が正常か確認する
+3. package/lockfile diff、公式release情報、既知脆弱性、peer dependency、runtime/toolchain互換性を確認する
+4. 次の判断表で「待機」「直接検証」「後継PR」「基準修復」のいずれかへ分類する
+5. stale、競合、lockfile不整合、複数依存関係の調整が必要なPRは、最新`main`から別Issue・別ブランチ・後継PRで対応する
+6. transitive dependencyの脆弱性は親packageの更新を優先し、`overrides`は親更新で解消できない場合のみ必要最小限で使用する
+7. ローカルの全検証、コミット前のサブエージェント検証、PR上のQuality/Security Auditをすべて成功させる
+8. squash merge後に`main`のQuality/Security Auditを確認し、置換元PRへ後継Issue/PRを記録してクローズする
+9. 公開日、脆弱性ID、判断理由、検証結果、PR/run IDを`docs/works/`へ記録する
+
+判断表:
+
+| 状態 | 必須対応 |
+|---|---|
+| 公開から7日未満 | マージせず、クールタイム満了まで待機 |
+| 既知CVEの修正 | 例外適用を検討できるが、公式情報、diff、OSV、全検証は省略禁止 |
+| 最新`main`の時点で脆弱またはCI失敗 | 依存更新と混ぜず、別Issueでsecurity/quality基準を先に修復 |
+| PRがstale、競合、lockfile不整合 | bot PRを無理に修正せず、最新`main`から後継PRを作成 |
+| major更新、peer/runtime/API不互換 | 実エラーと公式情報を確認し、最小互換対応または延期を選択。型安全性や検証を弱めて通さない |
+| transitive dependencyが脆弱 | 親package更新を先に検証し、解消しない場合のみ最小範囲のoverrideを検討 |
+| 全条件・全検証が成功 | squash mergeとブランチ削除を実施し、マージ後`main`も確認 |
+
+ローカルで最低限実行する検証:
+
+```bash
+bun install --frozen-lockfile
+bun run type-check
+bun run lint
+bun run test:run
+bun run test:coverage
+NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co \
+NEXT_PUBLIC_SUPABASE_ANON_KEY=test-anon-key \
+bun run build
+osv-scanner --lockfile bun.lock
+```
+
+さらに、シークレット、`console.log`、意図しないpackage/lockfile変更、生成された`next-env.d.ts`などの目的外差分がないことを確認する。上記のローカル検証とは別に、コミット直前にはセクション1.2のサブエージェント検証を必ず再実行する。
+
+### 10.6 `console.log` の禁止
 
 本番コードでの `console.log` は ESLint で警告。デバッグ用ログは必ず削除してからコミットする。
 

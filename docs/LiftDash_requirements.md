@@ -363,11 +363,8 @@ Bun は現時点で `npm audit` に相当する安定したネイティブコマ
 # OSV Scanner インストール（バイナリ版 - Go 不要）
 # https://github.com/google/osv-scanner/releases から対応バイナリを取得
 
-# 監査実行（bun.lockb を対象）
-osv-scanner --lockfile bun.lockb
-
-# package.json を対象にする場合
-osv-scanner --lockfile package.json
+# 監査実行（bun.lock を対象）
+osv-scanner --lockfile bun.lock
 ```
 
 GitHub Actions での定期実行設定:
@@ -380,22 +377,20 @@ on:
     - cron: '0 9 * * 1'   # 毎週月曜 9:00 UTC
   push:
     paths:
-      - 'bun.lockb'
+      - 'bun.lock'
       - 'package.json'
 
 jobs:
   audit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run OSV Scanner
-        uses: google/osv-scanner-action@v1
-        with:
-          scan-args: |-
-            --lockfile=bun.lockb
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.3.8
+    with:
+      scan-args: |-
+        --lockfile=bun.lock
 ```
 
 #### 🤖 Dependabot 設定
+
+Dependabot PRの調査、7日間クールタイム、脆弱性・互換性の判定、後継PR、検証、マージ後確認は`docs/dependabot-maintenance.md`に従う。stale、競合、lockfile不整合、追加の互換対応が必要なPRは直接マージせず、最新`main`からIssueドリブンで後継PRを作成する。
 
 ```yaml
 # .github/dependabot.yml
@@ -547,7 +542,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...           # 非公開。Server Actions 内の�
 
 | 項目 | 内容 |
 |---|---|
-| **コマンド** | `npm` → `bun`、`npx` → `bunx`、ロックファイルは `bun.lockb`（バイナリ） |
+| **コマンド** | `npm` → `bun`、`npx` → `bunx`、ロックファイルは `bun.lock` |
 | **CI** | `bun install --frozen-lockfile` でロックファイルを固定 |
 | **`bun audit`** | 安定版が存在しないため OSV Scanner を使用すること |
 | **Prisma** | Bun との相性問題の報告例あり。本プロジェクトでは Supabase JS SDK + 型自動生成で代替するため **Prisma は不採用** |
