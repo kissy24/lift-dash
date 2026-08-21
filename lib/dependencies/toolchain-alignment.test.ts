@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 
@@ -29,13 +29,36 @@ afterEach(() => {
 })
 
 describe('development toolchain alignment', () => {
-  it('pins compatible Vite and Vitest package versions', () => {
+  it('pins compatible Vite, Vitest, and TypeScript package versions', () => {
     expect(packageJson.devDependencies).toMatchObject({
+      '@typescript/native': 'npm:typescript@7.0.2',
       '@vitejs/plugin-react': '6.0.4',
       '@vitest/coverage-v8': '4.1.10',
+      typescript: '6.0.3',
       vite: '8.1.5',
       vitest: '4.1.10',
     })
+
+    expect(packageJson.scripts['type-check']).toBe(
+      'node node_modules/@typescript/native/bin/tsc --noEmit --incremental false'
+    )
+
+    const tsc = spawnSync(
+      process.execPath,
+      [path.resolve(process.cwd(), 'node_modules/@typescript/native/bin/tsc'), '--version'],
+      { encoding: 'utf8' }
+    )
+
+    expect(tsc.status, tsc.stderr).toBe(0)
+    expect(tsc.stdout.trim()).toBe('Version 7.0.2')
+    const legacyTypeScript = spawnSync(
+      process.execPath,
+      ['-e', "console.log(require('typescript').version)"],
+      { cwd: process.cwd(), encoding: 'utf8' }
+    )
+
+    expect(legacyTypeScript.status, legacyTypeScript.stderr).toBe(0)
+    expect(legacyTypeScript.stdout.trim()).toBe('6.0.3')
   })
 
   it('keeps commitlint packages on the same release line', () => {
@@ -65,6 +88,22 @@ describe('development toolchain alignment', () => {
       /- dependency-name: ['"]?@types\/node['"]?\n\s+update-types:\n\s+- version-update:semver-major/
     )
     expect(readme).toContain('Node.js `^22.22.2 || ^24.15.0 || >=26.0.0`')
+  })
+
+  it('keeps strict compiler checks and declares CSS side-effect imports explicitly', () => {
+    const tsconfig = readFileSync(path.resolve(process.cwd(), 'tsconfig.json'), 'utf8')
+    const globalDeclarationsPath = path.resolve(process.cwd(), 'global.d.ts')
+    const globalDeclarations = existsSync(globalDeclarationsPath)
+      ? readFileSync(globalDeclarationsPath, 'utf8')
+      : ''
+
+    expect(tsconfig).toMatch(/"strict": true/)
+    expect(tsconfig).toMatch(/"noUncheckedIndexedAccess": true/)
+    expect(tsconfig).toMatch(/"noImplicitReturns": true/)
+    expect(tsconfig).toMatch(/"noFallthroughCasesInSwitch": true/)
+    expect(tsconfig).toMatch(/"exactOptionalPropertyTypes": true/)
+    expect(tsconfig).not.toMatch(/"noUncheckedSideEffectImports": false/)
+    expect(globalDeclarations).toMatch(/declare module ['"]\*\.css['"]/)
   })
 })
 
