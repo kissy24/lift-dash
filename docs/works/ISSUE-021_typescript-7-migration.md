@@ -4,7 +4,7 @@
 
 - GitHub Issue: #58 `[ISSUE-021] TypeScript 7移行`
 - 置き換え対象PR: #54
-- PR: 作成予定
+- PR: #63
 - ブランチ: `chore/ISSUE-021_typescript-7-migration`
 
 ## 実施日
@@ -34,7 +34,7 @@
 
 ## 主なコミット
 
-- `chore(deps): migrate type checking to typescript 7 (#58)`
+- `ee07f91 chore(deps): migrate type checking to typescript 7 (#58)`
 
 ## 検証結果
 
@@ -51,8 +51,9 @@
 - `bun run build`: 成功
 - OSV Scanner: 成功（743 packages / No issues found）
 - サブエージェントによるコミット前確認: 成功（TypeScript 7型チェック、lint、47 files / 176 tests）
-- GitHub Actions Quality: 実施予定
-- GitHub Actions Security Audit: 実施予定
+- GitHub Actions Quality: 成功（run 32442661157）
+- GitHub Actions Security Audit: 成功（run 32440319997）
+- GitHub Advanced Security OSV Scanner: 成功（run 96656244247）
 
 ## 注意事項
 
