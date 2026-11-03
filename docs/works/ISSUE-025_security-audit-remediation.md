@@ -8,3 +8,5 @@
 - 公開日: minimatch以外の直接更新・overrideは公式npm公開から7日以上経過。minimatch 11.0.4 (2026-11-02公開)はGHSA-g3hv-75wg-m249修正のためセキュリティ例外を適用。
 - 検証: Bun監査0件、Bun 1.2.0 frozen install成功、本番ビルド成功。型・Lint・全テストはコミット前に別エージェントで再検証する。
 - CI: Push後にQualityとOSV Scannerの結果を確認する。
+
+Quality CI (41637731141)は成功。監査workflowはdisabled_inactivityだったため再有効化し、手動実行用workflow_dispatchを追加した。これにより修正ブランチのOSV検証も実行できる。
