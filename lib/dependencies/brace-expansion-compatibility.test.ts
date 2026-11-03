@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest'
 
 const projectRequire = createRequire(import.meta.url)
 
-describe('brace-expansion compatibility patch', () => {
-  it('keeps the callable CommonJS export used by minimatch 3', () => {
+describe('glob dependency compatibility patches', () => {
+  it('keeps callable CommonJS exports used by legacy glob consumers', () => {
     const braceExpand: unknown = projectRequire('brace-expansion')
     const minimatch: unknown = projectRequire('minimatch')
 

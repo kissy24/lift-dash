@@ -33,10 +33,10 @@ describe('development toolchain alignment', () => {
     expect(packageJson.devDependencies).toMatchObject({
       '@typescript/native': 'npm:typescript@7.0.2',
       '@vitejs/plugin-react': '6.0.4',
-      '@vitest/coverage-v8': '4.1.10',
+      '@vitest/coverage-v8': '4.1.12',
       typescript: '6.0.3',
-      vite: '8.1.5',
-      vitest: '4.1.10',
+      vite: '8.1.6',
+      vitest: '4.1.12',
     })
 
     expect(packageJson.scripts['type-check']).toBe(
